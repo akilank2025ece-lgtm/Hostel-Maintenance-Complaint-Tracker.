@@ -1,0 +1,2678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ComplaintBox - Hostel Maintenance</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 245px;
+            height: 100vh;
+            background: #111827;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            line-height: 1.4;
+            margin-bottom: 35px;
+        }
+
+        .logo span {
+            color: #60a5fa;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            margin-bottom: 8px;
+        }
+
+        .menu button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: #d1d5db;
+            padding: 13px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .menu button:hover,
+        .menu button.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 245px;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+        }
+
+        .backend {
+            background: #dcfce7;
+            color: #166534;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* ================= PAGE ================= */
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ================= DASHBOARD CARDS ================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .card-title {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 29px;
+            font-weight: bold;
+        }
+
+        /* ================= SECTION ================= */
+
+        .section {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+        }
+
+        /* ================= BUTTONS ================= */
+
+        .btn {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f3f4f6;
+            padding: 13px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        /* ================= STATUS ================= */
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .OPEN {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .IN_PROGRESS {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .RESOLVED {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .OVERDUE {
+            background: #7f1d1d;
+            color: white;
+        }
+
+        /* ================= FORMS ================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 17px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        input,
+        select,
+        textarea {
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            padding: 11px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #2563eb;
+        }
+
+        /* ================= MODAL ================= */
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 12px;
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        /* ================= FILTER ================= */
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filters input {
+            min-width: 230px;
+        }
+
+        /* ================= ROLE CARDS ================= */
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .role-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .role-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .role-card h3 {
+            margin-bottom: 8px;
+        }
+
+        .role-card p {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* ================= TOAST ================= */
+
+        .toast {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            background: #111827;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 8px;
+            display: none;
+            z-index: 200;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width: 1100px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 700px) {
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                padding: 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- ========================================================= -->
+<!-- SIDEBAR -->
+<!-- ========================================================= -->
+
+<div class="sidebar">
+
+    <div class="logo">
+
+        🏠 Complaint<span>Box</span>
+
+        <br>
+
+        <small style="font-size:11px;color:#9ca3af;">
+            Hostel Maintenance
+        </small>
+
+    </div>
+
+
+    <ul class="menu">
+
+        <li>
+            <button class="active"
+                    onclick="showPage('dashboard',this)">
+                🏠 Dashboard
+            </button>
+        </li>
+
+        <li>
+            <button onclick="showPage('resident',this)">
+                👨‍🎓 Resident
+            </button>
+        </li>
+
+        <li>
+            <button onclick="showPage('complaints',this)">
+                📝 Complaints
+            </button>
+        </li>
+
+        <li>
+            <button onclick="showPage('staff',this)">
+                👨‍🔧 Staff
+            </button>
+        </li>
+
+        <li>
+            <button onclick="showPage('warden',this)">
+                👮 Warden
+            </button>
+        </li>
+
+    </ul>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- MAIN -->
+<!-- ========================================================= -->
+
+<div class="main">
+
+
+    <div class="topbar">
+
+        <h1 id="pageTitle">
+            Dashboard
+        </h1>
+
+        <div class="backend">
+            ● Spring Boot Connected
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- DASHBOARD -->
+    <!-- ===================================================== -->
+
+    <div id="dashboard"
+         class="page active">
+
+
+        <div class="cards">
+
+            <div class="card">
+                <div class="card-title">
+                    Total Complaints
+                </div>
+
+                <div class="card-value"
+                     id="totalCount">
+                    0
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">
+                    Open
+                </div>
+
+                <div class="card-value"
+                     id="openCount">
+                    0
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">
+                    In Progress
+                </div>
+
+                <div class="card-value"
+                     id="progressCount">
+                    0
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">
+                    Resolved
+                </div>
+
+                <div class="card-value"
+                     id="resolvedCount">
+                    0
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">
+                    Overdue
+                </div>
+
+                <div class="card-value"
+                     id="overdueCount">
+                    0
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ROLE FUNCTIONS -->
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    System Functions
+                </h2>
+
+            </div>
+
+
+            <div class="role-grid">
+
+
+                <div class="role-card"
+                     onclick="openComplaintModal()">
+
+                    <h3>
+                        👨‍🎓 Resident
+                    </h3>
+
+                    <p>
+                        Raise a complaint with category,
+                        room number and description and
+                        view the status of your complaints.
+                    </p>
+
+                </div>
+
+
+                <div class="role-card"
+                     onclick="showPageByName('staff')">
+
+                    <h3>
+                        👨‍🔧 Staff
+                    </h3>
+
+                    <p>
+                        View assigned complaints and update
+                        their status from OPEN to IN_PROGRESS
+                        and finally RESOLVED.
+                    </p>
+
+                </div>
+
+
+                <div class="role-card"
+                     onclick="showPageByName('warden')">
+
+                    <h3>
+                        👮 Warden
+                    </h3>
+
+                    <p>
+                        View open complaints sorted by age
+                        and identify complaints that are
+                        overdue for more than 5 days.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECENT COMPLAINTS -->
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Recent Complaints
+                </h2>
+
+                <button class="btn primary"
+                        onclick="loadComplaints()">
+                    🔄 Refresh
+                </button>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Resident</th>
+                        <th>Room</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Age</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="dashboardTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- RESIDENT -->
+    <!-- ===================================================== -->
+
+    <div id="resident"
+         class="page">
+
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    👨‍🎓 Resident Portal
+                </h2>
+
+                <button class="btn primary"
+                        onclick="openComplaintModal()">
+                    + Raise Complaint
+                </button>
+
+            </div>
+
+
+            <p style="color:#6b7280;margin-bottom:20px;">
+
+                Select your name to view your own complaints
+                and their current status.
+
+            </p>
+
+
+            <div class="filters">
+
+                <select id="residentView"
+                        onchange="showResidentComplaints()">
+
+                    <option value="">
+                        Select Resident
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="section">
+
+            <h2 style="margin-bottom:18px;">
+                My Complaints
+            </h2>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Room</th>
+                        <th>Staff</th>
+                        <th>Status</th>
+                        <th>Created</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="residentComplaintTable">
+
+                    <tr>
+                        <td colspan="7"
+                            class="empty">
+
+                            Select a resident to view complaints.
+
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- ADD RESIDENT -->
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Add Resident
+                </h2>
+
+            </div>
+
+
+            <form onsubmit="addResident(event)">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Name
+                        </label>
+
+                        <input id="residentName"
+                               required
+                               placeholder="Resident name">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Email
+                        </label>
+
+                        <input id="residentEmail"
+                               type="email"
+                               required
+                               placeholder="student@gmail.com">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Room Number
+                        </label>
+
+                        <input id="residentRoom"
+                               required
+                               placeholder="A101">
+
+                    </div>
+
+                </div>
+
+                <br>
+
+                <button class="btn primary">
+                    Add Resident
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- COMPLAINTS -->
+    <!-- ===================================================== -->
+
+    <div id="complaints"
+         class="page">
+
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Complaint Management
+                </h2>
+
+                <button class="btn primary"
+                        onclick="openComplaintModal()">
+                    + Raise Complaint
+                </button>
+
+            </div>
+
+
+            <div class="filters">
+
+                <input id="searchBox"
+                       placeholder="🔍 Search complaint..."
+                       oninput="displayComplaints()">
+
+
+                <select id="statusFilter"
+                        onchange="displayComplaints()">
+
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option value="OPEN">
+                        OPEN
+                    </option>
+
+                    <option value="IN_PROGRESS">
+                        IN_PROGRESS
+                    </option>
+
+                    <option value="RESOLVED">
+                        RESOLVED
+                    </option>
+
+                </select>
+
+
+                <button class="btn secondary"
+                        onclick="loadComplaints()">
+                    🔄 Refresh
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="section">
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Resident</th>
+                        <th>Room</th>
+                        <th>Category</th>
+                        <th>Staff</th>
+                        <th>Status</th>
+                        <th>Age</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="complaintTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- STAFF -->
+    <!-- ===================================================== -->
+
+    <div id="staff"
+         class="page">
+
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    👨‍🔧 Staff Portal
+                </h2>
+
+                <button class="btn primary"
+                        onclick="openStaffModal()">
+                    + Add Staff
+                </button>
+
+            </div>
+
+
+            <p style="color:#6b7280;margin-bottom:20px;">
+
+                Staff can update the status of assigned
+                complaints until they are resolved.
+
+            </p>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Assigned Complaints</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="staffTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- STAFF COMPLAINTS -->
+
+        <div class="section">
+
+            <h2 style="margin-bottom:18px;">
+                Assigned Complaints
+            </h2>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Resident</th>
+                        <th>Status</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="staffComplaintTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- WARDEN -->
+    <!-- ===================================================== -->
+
+    <div id="warden"
+         class="page">
+
+
+        <div class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    👮 Warden Dashboard
+                </h2>
+
+                <button class="btn primary"
+                        onclick="displayWardenComplaints()">
+                    🔄 Refresh
+                </button>
+
+            </div>
+
+
+            <p style="color:#6b7280;margin-bottom:20px;">
+
+                Open complaints are automatically displayed
+                from oldest to newest. Complaints open for
+                more than 5 days are marked as overdue.
+
+            </p>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Complaint</th>
+                        <th>Resident</th>
+                        <th>Room</th>
+                        <th>Category</th>
+                        <th>Staff</th>
+                        <th>Created</th>
+                        <th>Age</th>
+                        <th>Priority</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="wardenTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- RAISE COMPLAINT MODAL -->
+<!-- ========================================================= -->
+
+<div class="modal"
+     id="complaintModal">
+
+
+    <div class="modal-content">
+
+
+        <div class="modal-header">
+
+            <h2>
+                📝 Raise Maintenance Complaint
+            </h2>
+
+            <span class="close"
+                  onclick="closeModal('complaintModal')">
+                ×
+            </span>
+
+        </div>
+
+
+        <form onsubmit="submitComplaint(event)">
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Resident
+                    </label>
+
+                    <select id="complaintResident"
+                            required>
+
+                        <option value="">
+                            Select Resident
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Room Number
+                    </label>
+
+                    <input id="complaintRoom"
+                           placeholder="A101"
+                           required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Category
+                    </label>
+
+                    <select id="complaintCategory"
+                            required>
+
+                        <option value="">
+                            Select Category
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Complaint Description
+                    </label>
+
+                    <textarea id="complaintDescription"
+                              placeholder="Describe the plumbing, electrical, cleaning or other maintenance problem..."
+                              required></textarea>
+
+                </div>
+
+            </div>
+
+
+            <br>
+
+
+            <button class="btn primary">
+                Submit Complaint
+            </button>
+
+
+            <button type="button"
+                    class="btn secondary"
+                    onclick="closeModal('complaintModal')">
+
+                Cancel
+
+            </button>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- STAFF MODAL -->
+<!-- ========================================================= -->
+
+<div class="modal"
+     id="staffModal">
+
+
+    <div class="modal-content">
+
+
+        <div class="modal-header">
+
+            <h2>
+                👨‍🔧 Add Staff
+            </h2>
+
+            <span class="close"
+                  onclick="closeModal('staffModal')">
+                ×
+            </span>
+
+        </div>
+
+
+        <form onsubmit="addStaff(event)">
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Name
+                    </label>
+
+                    <input id="staffName"
+                           required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input id="staffEmail"
+                           type="email"
+                           required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Department
+                    </label>
+
+                    <input id="staffDepartment"
+                           placeholder="Electrical / Plumbing / Cleaning"
+                           required>
+
+                </div>
+
+
+            </div>
+
+
+            <br>
+
+
+            <button class="btn primary">
+                Add Staff
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- TOAST -->
+<!-- ========================================================= -->
+
+<div class="toast"
+     id="toast">
+</div>
+
+
+<script>
+
+
+    /* ============================================================
+       API
+    ============================================================ */
+
+    const API = {
+
+        complaints: "/api/complaints",
+
+        residents: "/api/residents",
+
+        staff: "/api/staff",
+
+        categories: "/api/categories"
+
+    };
+
+
+    let complaints = [];
+
+    let residents = [];
+
+    let staff = [];
+
+    let categories = [];
+
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+
+    function showPage(page, button) {
+
+        document.querySelectorAll(".page")
+            .forEach(p => p.classList.remove("active"));
+
+
+        document.getElementById(page)
+            .classList.add("active");
+
+
+        document.querySelectorAll(".menu button")
+            .forEach(b => b.classList.remove("active"));
+
+
+        if (button) {
+            button.classList.add("active");
+        }
+
+
+        const titles = {
+
+            dashboard: "Dashboard",
+
+            resident: "Resident Portal",
+
+            complaints: "Complaint Management",
+
+            staff: "Staff Portal",
+
+            warden: "Warden Dashboard"
+
+        };
+
+
+        document.getElementById("pageTitle")
+            .innerText = titles[page];
+
+
+        if (page === "warden") {
+            displayWardenComplaints();
+        }
+
+        if (page === "staff") {
+            displayStaff();
+            displayStaffComplaints();
+        }
+
+    }
+
+
+    function showPageByName(page) {
+
+        const button =
+            [...document.querySelectorAll(".menu button")]
+                .find(b =>
+                    b.innerText.toLowerCase()
+                        .includes(page)
+                );
+
+
+        showPage(page, button);
+
+    }
+
+
+    /* ============================================================
+       TOAST
+    ============================================================ */
+
+    function toast(message) {
+
+        const element =
+            document.getElementById("toast");
+
+
+        element.innerText = message;
+
+        element.classList.add("show");
+
+
+        setTimeout(() => {
+
+            element.classList.remove("show");
+
+        }, 3000);
+
+    }
+
+
+    /* ============================================================
+       MODAL
+    ============================================================ */
+
+    function openComplaintModal() {
+
+        document.getElementById("complaintModal")
+            .classList.add("show");
+
+
+        loadResidents();
+
+        loadCategories();
+
+    }
+
+
+    function openStaffModal() {
+
+        document.getElementById("staffModal")
+            .classList.add("show");
+
+    }
+
+
+    function closeModal(id) {
+
+        document.getElementById(id)
+            .classList.remove("show");
+
+    }
+
+
+    /* ============================================================
+       LOAD COMPLAINTS
+    ============================================================ */
+
+    async function loadComplaints() {
+
+        try {
+
+            const response =
+                await fetch(API.complaints);
+
+
+            if (!response.ok) {
+
+                throw new Error("Complaint API error");
+
+            }
+
+
+            complaints =
+                await response.json();
+
+
+            updateDashboard();
+
+            displayComplaints();
+
+            displayDashboard();
+
+            displayWardenComplaints();
+
+            displayStaffComplaints();
+
+        }
+        catch(error) {
+
+            console.error(error);
+
+            toast("Unable to load complaints");
+
+        }
+
+    }
+
+
+    /* ============================================================
+       COMPLAINT AGE
+    ============================================================ */
+
+    function getAgeDays(createdAt) {
+
+        if (!createdAt) {
+            return 0;
+        }
+
+
+        const created =
+            new Date(createdAt);
+
+
+        const now =
+            new Date();
+
+
+        const difference =
+            now - created;
+
+
+        return Math.floor(
+            difference / (1000 * 60 * 60 * 24)
+        );
+
+    }
+
+
+    function isOverdue(complaint) {
+
+        return complaint.status !== "RESOLVED"
+            && getAgeDays(complaint.createdAt) > 5;
+
+    }
+
+
+    /* ============================================================
+       DASHBOARD
+    ============================================================ */
+
+    function updateDashboard() {
+
+        document.getElementById("totalCount")
+            .innerText = complaints.length;
+
+
+        document.getElementById("openCount")
+            .innerText =
+            complaints.filter(c =>
+                c.status === "OPEN"
+            ).length;
+
+
+        document.getElementById("progressCount")
+            .innerText =
+            complaints.filter(c =>
+                c.status === "IN_PROGRESS"
+            ).length;
+
+
+        document.getElementById("resolvedCount")
+            .innerText =
+            complaints.filter(c =>
+                c.status === "RESOLVED"
+            ).length;
+
+
+        document.getElementById("overdueCount")
+            .innerText =
+            complaints.filter(c =>
+                isOverdue(c)
+            ).length;
+
+    }
+
+
+    /* ============================================================
+       DASHBOARD TABLE
+    ============================================================ */
+
+    function displayDashboard() {
+
+        const table =
+            document.getElementById("dashboardTable");
+
+
+        const latest =
+            [...complaints]
+                .sort((a,b) =>
+                    new Date(b.createdAt)
+                    - new Date(a.createdAt)
+                )
+                .slice(0,5);
+
+
+        if (latest.length === 0) {
+
+            table.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="empty">
+                    No complaints found
+                </td>
+            </tr>
+        `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            latest.map(c => `
+
+        <tr>
+
+            <td>${c.id}</td>
+
+            <td>${safe(c.description)}</td>
+
+            <td>${safe(c.resident?.name)}</td>
+
+            <td>${safe(c.resident?.roomNumber)}</td>
+
+            <td>${safe(c.category?.name)}</td>
+
+            <td>
+                <span class="status ${c.status}">
+                    ${c.status}
+                </span>
+            </td>
+
+            <td>
+                ${getAgeDays(c.createdAt)} day(s)
+            </td>
+
+        </tr>
+
+    `).join("");
+
+    }
+
+
+    /* ============================================================
+       DISPLAY ALL COMPLAINTS
+    ============================================================ */
+
+    function displayComplaints() {
+
+        const table =
+            document.getElementById("complaintTable");
+
+
+        const search =
+            document.getElementById("searchBox")
+                ?.value
+                .toLowerCase() || "";
+
+
+        const status =
+            document.getElementById("statusFilter")
+                ?.value || "";
+
+
+        const filtered =
+            complaints.filter(c => {
+
+                const text =
+                    `${c.description || ""}
+                 ${c.resident?.name || ""}
+                 ${c.category?.name || ""}
+                 ${c.status || ""}`
+                        .toLowerCase();
+
+
+                return text.includes(search)
+                    && (!status || c.status === status);
+
+            });
+
+
+        if (filtered.length === 0) {
+
+            table.innerHTML = `
+            <tr>
+                <td colspan="9"
+                    class="empty">
+                    No complaints found
+                </td>
+            </tr>
+        `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            filtered.map(c => `
+
+        <tr>
+
+            <td>${c.id}</td>
+
+            <td>${safe(c.description)}</td>
+
+            <td>${safe(c.resident?.name)}</td>
+
+            <td>${safe(c.resident?.roomNumber)}</td>
+
+            <td>${safe(c.category?.name)}</td>
+
+            <td>${safe(c.staff?.name || "Not assigned")}</td>
+
+            <td>
+                <span class="status ${c.status}">
+                    ${c.status}
+                </span>
+            </td>
+
+            <td>
+                ${getAgeDays(c.createdAt)} day(s)
+            </td>
+
+            <td>
+
+                ${
+                c.status === "OPEN"
+                    ?
+                    `<button class="btn warning"
+                        onclick="updateStatus(${c.id},'IN_PROGRESS')">
+                        Start
+                    </button>`
+                    :
+                    ""
+            }
+
+
+                ${
+                c.status === "IN_PROGRESS"
+                    ?
+                    `<button class="btn success"
+                        onclick="updateStatus(${c.id},'RESOLVED')">
+                        Resolve
+                    </button>`
+                    :
+                    ""
+            }
+
+            </td>
+
+        </tr>
+
+    `).join("");
+
+    }
+
+
+    /* ============================================================
+       RESIDENTS
+    ============================================================ */
+
+    async function loadResidents() {
+
+        try {
+
+            const response =
+                await fetch(API.residents);
+
+
+            if (!response.ok) {
+                throw new Error();
+            }
+
+
+            residents =
+                await response.json();
+
+
+            populateResidentDropdowns();
+
+        }
+        catch(error) {
+
+            console.error(error);
+
+            toast("Unable to load residents");
+
+        }
+
+    }
+
+
+    function populateResidentDropdowns() {
+
+        const complaintSelect =
+            document.getElementById("complaintResident");
+
+
+        const viewSelect =
+            document.getElementById("residentView");
+
+
+        complaintSelect.innerHTML =
+            `<option value="">
+            Select Resident
+        </option>`;
+
+
+        viewSelect.innerHTML =
+            `<option value="">
+            Select Resident
+        </option>`;
+
+
+        residents.forEach(r => {
+
+            complaintSelect.innerHTML += `
+            <option value="${r.id}">
+                ${safe(r.name)} - ${safe(r.roomNumber)}
+            </option>
+        `;
+
+
+            viewSelect.innerHTML += `
+            <option value="${r.id}">
+                ${safe(r.name)} - Room ${safe(r.roomNumber)}
+            </option>
+        `;
+
+        });
+
+    }
+
+
+    /* ============================================================
+       RESIDENT COMPLAINTS
+    ============================================================ */
+
+    function showResidentComplaints() {
+
+        const residentId =
+            document.getElementById("residentView")
+                .value;
+
+
+        const table =
+            document.getElementById("residentComplaintTable");
+
+
+        if (!residentId) {
+
+            table.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="empty">
+                    Select a resident.
+                </td>
+            </tr>
+        `;
+
+            return;
+
+        }
+
+
+        const myComplaints =
+            complaints.filter(c =>
+                String(c.resident?.id)
+                === String(residentId)
+            );
+
+
+        if (myComplaints.length === 0) {
+
+            table.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="empty">
+                    No complaints found.
+                </td>
+            </tr>
+        `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            myComplaints.map(c => `
+
+        <tr>
+
+            <td>${c.id}</td>
+
+            <td>${safe(c.description)}</td>
+
+            <td>${safe(c.category?.name)}</td>
+
+            <td>${safe(c.resident?.roomNumber)}</td>
+
+            <td>${safe(c.staff?.name || "Not assigned")}</td>
+
+            <td>
+
+                <span class="status ${c.status}">
+                    ${c.status}
+                </span>
+
+            </td>
+
+            <td>
+                ${formatDate(c.createdAt)}
+            </td>
+
+        </tr>
+
+    `).join("");
+
+    }
+
+
+    /* ============================================================
+       ADD RESIDENT
+    ============================================================ */
+
+    async function addResident(event) {
+
+        event.preventDefault();
+
+
+        const data = {
+
+            name:
+            document.getElementById("residentName").value,
+
+            email:
+            document.getElementById("residentEmail").value,
+
+            roomNumber:
+            document.getElementById("residentRoom").value
+
+        };
+
+
+        try {
+
+            const response =
+                await fetch(API.residents, {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(data)
+
+                });
+
+
+            if (!response.ok) {
+
+                const error =
+                    await response.text();
+
+                console.error(error);
+
+                throw new Error(error);
+
+            }
+
+
+            event.target.reset();
+
+
+            await loadResidents();
+
+
+            toast("Resident added successfully");
+
+        }
+        catch(error) {
+
+            console.error(error);
+
+            toast("Failed to add resident");
+
+        }
+
+    }
+
+
+    /* ============================================================
+       CATEGORIES
+    ============================================================ */
+
+    async function loadCategories() {
+
+        try {
+
+            const response =
+                await fetch(API.categories);
+
+
+            if (!response.ok) {
+                throw new Error();
+            }
+
+
+            categories =
+                await response.json();
+
+
+            const select =
+                document.getElementById("complaintCategory");
+
+
+            select.innerHTML =
+                `<option value="">
+                Select Category
+            </option>`;
+
+
+            categories.forEach(c => {
+
+                select.innerHTML += `
+                <option value="${c.id}">
+                    ${safe(c.name)}
+                </option>
+            `;
+
+            });
+
+        }
+        catch(error) {
+
+            console.error(error);
+
+            toast("Unable to load categories");
+
+        }
+
+    }
+
+
+    /* ============================================================
+       CREATE COMPLAINT
+    ============================================================ */
+
+    async function submitComplaint(event) {
+
+        event.preventDefault();
+
+
+        const residentId =
+            document.getElementById("complaintResident")
+                .value;
+
+
+        const categoryId =
+            document.getElementById("complaintCategory")
+                .value;
+
+
+        const room =
+            document.getElementById("complaintRoom")
+                .value;
+
+
+        const description =
+            document.getElementById("complaintDescription")
+                .value;
+
+
+        const data = {
+
+            description: description,
+
+            status: "OPEN",
+
+            resident: {
+                id: Number(residentId)
+            },
+
+            category: {
+                id: Number(categoryId)
+            }
+
+        };
+
+
+        try {
+
+            const response =
+                await fetch(API.complaints, {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(data)
+
+                });
+
+
+            if (!response.ok) {
+
+                const error =
+                    await response.text();
+
+                console.error(error);
+
+                throw new Error(error);
+
+            }
+
+
+            closeModal("complaintModal");
+
+
+            event.target.reset();
+
+
+            toast("Complaint raised successfully");
+
+
+            await loadComplaints();
+
+        }
+        catch(error) {
+
+            console.error(error);
+
+            toast("Failed to raise complaint");
+
+        }
+
+    }
+
+
+    /* ============================================================
+       STAFF
+    ============================================================ */
+
+    async function loadStaff() {
+
+        try {
+
+            const response =
+                await fetch(API.staff);
+
+
+            if (!response.ok) {
+                throw new Error();
+            }
+
+
+            staff =
+                await response.json();
+
+
+            displayStaff();
+
+        }
+        catch(error) {
+
+            console.error(error);
+
+            toast("Unable to load staff");
+
+        }
+
+    }
+
+
+    function displayStaff() {
+
+        const table =
+            document.getElementById("staffTable");
+
+
+        if (!staff.length) {
+
+            table.innerHTML = `
+            <tr>
+                <td colspan="5"
+                    class="empty">
+                    No staff found.
+                </td>
+            </tr>
+        `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            staff.map(s => {
+
+                const assigned =
+                    complaints.filter(c =>
+                        c.staff?.id === s.id
+                    ).length;
+
+
+                return `
+
+            <tr>
+
+                <td>${s.id}</td>
+
+                <td>${safe(s.name)}</td>
+
+                <td>${safe(s.email)}</td>
+
+                <td>${safe(s.department)}</td>
+
+                <td>${assigned}</td>
+
+            </tr>
+
+            `;
+
+            }).join("");
+
+    }
+
+
+    /* ============================================================
+       STAFF COMPLAINTS
+    ============================================================ */
+
+    function displayStaffComplaints() {
+
+        const table =
+            document.getElementById("staffComplaintTable");
+
+
+        const assigned =
+            complaints.filter(c =>
+                c.staff != null
+            );
+
+
+        if (!assigned.length) {
+
+            table.innerHTML = `
+            <tr>
+                <td colspan="5"
+                    class="empty">
+                    No assigned complaints.
+                </td>
+            </tr>
+        `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            assigned.map(c => `
+
+        <tr>
+
+            <td>${c.id}</td>
+
+            <td>${safe(c.description)}</td>
+
+            <td>${safe(c.resident?.name)}</td>
+
+            <td>
+
+                <span class="status ${c.status}">
+                    ${c.status}
+                </span>
+
+            </td>
+
+            <td>
+
+                ${
+                c.status === "OPEN"
+                    ?
+                    `<button
+                        class="btn warning"
+                        onclick="updateStatus(${c.id},'IN_PROGRESS')">
+                        Start Work
+                    </button>`
+                    :
+                    ""
+            }
+
+
+                ${
+                c.status === "IN_PROGRESS"
+                    ?
+                    `<button
+                        class="btn success"
+                        onclick="updateStatus(${c.id},'RESOLVED')">
+                        Mark Resolved
+                    </button>`
+                    :
+                    ""
+            }
+
+            </td>
+
+        </tr>
+
+    `).join("");
+
+    }
+
+
+    /* ============================================================
+       ADD STAFF
+    ============================================================ */
+
+    async function addStaff(event) {
+
+        event.preventDefault();
+
+
+        const data = {
+
+            name:
+            document.getElementById("staffName").value,
+
+            email:
+            document.getElementById("staffEmail").value,
+
+            department:
+            document.getElementById("staffDepartment").value
+
+        };
+
+
+        try {
+
+            const response =
+                await fetch(API.staff, {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(data)
+
+                });
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    await response.text()
+                );
+
+            }
+
+
+            closeModal("staffModal");
+
+            event.target.reset();
+
+            toast("Staff added successfully");
+
+            await loadStaff();
+
+        }
+        catch(error) {
+
+            console.error(error);
+
+            toast("Failed to add staff");
+
+        }
+
+    }
+
+
+    /* ============================================================
+       UPDATE STATUS
+    ============================================================ */
+
+    async function updateStatus(id,status) {
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API.complaints}/${id}/status?status=${status}`,
+                    {
+                        method: "PUT"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const error =
+                    await response.text();
+
+                console.error(error);
+
+                throw new Error(error);
+
+            }
+
+
+            toast(
+                `Complaint ${id} changed to ${status}`
+            );
+
+
+            await loadComplaints();
+
+        }
+        catch(error) {
+
+            console.error(error);
+
+            toast("Status update failed");
+
+        }
+
+    }
+
+
+    /* ============================================================
+       WARDEN
+    ============================================================ */
+
+    function displayWardenComplaints() {
+
+        const table =
+            document.getElementById("wardenTable");
+
+
+        /*
+           Only OPEN complaints are shown.
+           Sorted by age:
+           oldest complaint first.
+        */
+
+        const openComplaints =
+            complaints
+                .filter(c =>
+                    c.status === "OPEN"
+                )
+                .sort((a,b) =>
+                    new Date(a.createdAt)
+                    -
+                    new Date(b.createdAt)
+                );
+
+
+        if (!openComplaints.length) {
+
+            table.innerHTML = `
+            <tr>
+                <td colspan="9"
+                    class="empty">
+
+                    No open complaints.
+
+                </td>
+            </tr>
+        `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            openComplaints.map(c => {
+
+                const overdue =
+                    isOverdue(c);
+
+
+                return `
+
+            <tr>
+
+                <td>${c.id}</td>
+
+                <td>
+                    ${safe(c.description)}
+                </td>
+
+                <td>
+                    ${safe(c.resident?.name)}
+                </td>
+
+                <td>
+                    ${safe(c.resident?.roomNumber)}
+                </td>
+
+                <td>
+                    ${safe(c.category?.name)}
+                </td>
+
+                <td>
+                    ${safe(c.staff?.name || "Not assigned")}
+                </td>
+
+                <td>
+                    ${formatDate(c.createdAt)}
+                </td>
+
+                <td>
+
+                    ${getAgeDays(c.createdAt)}
+                    day(s)
+
+                </td>
+
+                <td>
+
+                    ${
+                    overdue
+                        ?
+                        `<span class="status OVERDUE">
+                            OVERDUE
+                        </span>`
+                        :
+                        `<span class="status OPEN">
+                            OPEN
+                        </span>`
+                }
+
+                </td>
+
+            </tr>
+
+            `;
+
+            }).join("");
+
+    }
+
+
+    /* ============================================================
+       HELPERS
+    ============================================================ */
+
+    function formatDate(date) {
+
+        if (!date) {
+            return "-";
+        }
+
+
+        return new Date(date)
+            .toLocaleDateString();
+
+    }
+
+
+    function safe(value) {
+
+        if (value === null ||
+            value === undefined) {
+
+            return "-";
+
+        }
+
+
+        return String(value)
+            .replaceAll("&","&amp;")
+            .replaceAll("<","&lt;")
+            .replaceAll(">","&gt;")
+            .replaceAll('"',"&quot;")
+            .replaceAll("'","&#039;");
+
+    }
+
+
+    /* ============================================================
+       INITIAL LOAD
+    ============================================================ */
+
+    window.addEventListener("load", async () => {
+
+        await loadResidents();
+
+        await loadCategories();
+
+        await loadStaff();
+
+        await loadComplaints();
+
+    });
+
+</script>
+
+</body>
+</html>
